@@ -1,5 +1,6 @@
 ﻿using Dummy.Common.Commands;
 using Dummy.Common.Events;
+using Dummy.Common.RabbitMq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -1,12 +1,13 @@
-﻿using Dummy.Common.Commands;
+﻿using System.Reflection;
+using System.Threading.Tasks;
+using Dummy.Common.Commands;
 using Dummy.Common.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RawRabbit;
 using RawRabbit.Configuration;
 using RawRabbit.Instantiation;
-using System.Reflection;
-using System.Threading.Tasks;
+using RawRabbit.Pipe.Middleware;
 
 namespace Dummy.Common.RabbitMq
 {
@@ -19,11 +20,10 @@ namespace Dummy.Common.RabbitMq
         /// <param name="bus"></param>
         /// <param name="handler"></param>
         /// <returns></returns>
-        public static Task WithCommandHandlerAsync<TCommand>(this IBusClient bus,
-            ICommandHandler<TCommand> handler) where TCommand : ICommand
+        public static Task WithCommandHandlerAsync<TCommand>(this IBusClient bus, ICommandHandler<TCommand> handler) where TCommand : ICommand
             => bus.SubscribeAsync<TCommand>(msg => handler.HandleAsync(msg),
-                ctx => ctx.UseConsumerConfiguration(cfg =>
-                cfg.FromDeclaredQueue(q => q.WithName(GetQueueName<TCommand>()))));
+                ctx => ctx.UseConsumeConfiguration(cfg =>
+                cfg.FromQueue(GetQueueName<TCommand>())));
 
         /// <summary>
         /// Event handler
@@ -32,11 +32,10 @@ namespace Dummy.Common.RabbitMq
         /// <param name="bus"></param>
         /// <param name="handler"></param>
         /// <returns></returns>
-        public static Task WithEventHandlerAsync<TEvent>(this IBusClient bus,
-            IEventHandler<TEvent> handler) where TEvent : IEvent
+        public static Task WithEventHandlerAsync<TEvent>(this IBusClient bus, IEventHandler<TEvent> handler) where TEvent : IEvent
             => bus.SubscribeAsync<TEvent>(msg => handler.HandleAsync(msg),
-                ctx => ctx.UseConsumerConfiguration(cfg =>
-                cfg.FromDeclaredQueue(q => q.WithName(GetQueueName<TEvent>()))));
+                ctx => ctx.UseConsumeConfiguration(cfg =>
+                cfg.FromQueue(GetQueueName<TEvent>())));
 
         /// <summary>
         /// Gets the queue name to avoid issues with multiple services
