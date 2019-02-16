@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dummy.Api.Handlers;
+using Dummy.Common.Events;
+using Dummy.Common.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +27,8 @@ namespace Dummy.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddRabbitMq(Configuration);
+            services.AddScoped<IEventHandler<ActivityCreated>, ActivityCreatedHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

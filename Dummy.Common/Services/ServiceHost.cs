@@ -4,6 +4,7 @@ using Dummy.Common.RabbitMq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RawRabbit;
 using System;
 using System.Collections.Generic;
@@ -101,12 +102,18 @@ namespace Dummy.Common.Services
             /// <returns></returns>
             public BusBuilder SubscribeToEvent<TEvent>() where TEvent : IEvent
             {
-                var handler = (IEventHandler<TEvent>)_webHost.Services
-                    .GetService(typeof(IEventHandler<TEvent>));
+                // Using microsoft extension dependency to resolve the issue to get events services registered.
+                using (var serviceScope = _webHost.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                {
+                    // Gets the event in service collection.
+                    var handler = (IEventHandler<TEvent>)serviceScope.ServiceProvider
+                        .GetService(typeof(IEventHandler<TEvent>));
 
-                _bus.WithEventHandlerAsync(handler);
+                    // Register the service in the bus.
+                    _bus.WithEventHandlerAsync(handler);
 
-                return this;
+                    return this;
+                }
             }
 
             public override ServiceHost Build()

@@ -46,7 +46,7 @@ namespace Dummy.Common.RabbitMq
             => $"{Assembly.GetEntryAssembly().GetName()}/{typeof(T).Name}";
 
         /// <summary>
-        /// Add rabbit
+        /// Create the connection with rabbitMQ and adds in the service collection.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
@@ -54,6 +54,7 @@ namespace Dummy.Common.RabbitMq
         {
             var options = new RabbitMqOptions();
             var section = configuration.GetSection("rabbitmq");
+
             section.Bind(options);
 
             var client = RawRabbitFactory.CreateSingleton(new RawRabbitOptions
