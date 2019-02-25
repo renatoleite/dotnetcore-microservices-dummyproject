@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Dummy.Service.Activities.Domain.Models;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 

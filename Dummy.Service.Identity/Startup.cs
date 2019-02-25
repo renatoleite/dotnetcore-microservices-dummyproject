@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dummy.Common.Commands;
+using Dummy.Common.Mongo;
 using Dummy.Common.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +27,7 @@ namespace Dummy.Service.Identity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddMongoDB(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

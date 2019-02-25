@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dummy.Common.Commands;
+using Dummy.Common.Mongo;
 using Dummy.Common.RabbitMq;
+using Dummy.Service.Activities.Domain.Repositories;
 using Dummy.Service.Activities.Handlers;
+using Dummy.Service.Activities.Repositories;
+using Dummy.Service.Activities.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +33,12 @@ namespace Dummy.Service.Activities
             services.AddMvc();
 
             services.AddRabbitMq(Configuration);
+            services.AddMongoDB(Configuration);
+
             services.AddScoped<ICommandHandler<CreateActivity>, CreateActivityHandler>();
+            services.AddScoped<IActivityRepository, ActivityRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IDatabaseSeeder, CustomMongoSeeder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +48,10 @@ namespace Dummy.Service.Activities
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Calls database initializer.
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+                serviceScope.ServiceProvider.GetService<IDatabaseInitializer>().InitializeAsync();
 
             app.UseMvc();
         }
