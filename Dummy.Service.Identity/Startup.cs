@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Dummy.Common.Commands;
 using Dummy.Common.Mongo;
 using Dummy.Common.RabbitMq;
+using Dummy.Service.Identity.Domain.Repositories;
+using Dummy.Service.Identity.Domain.Services;
+using Dummy.Service.Identity.Handlers;
+using Dummy.Service.Identity.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,15 +32,21 @@ namespace Dummy.Service.Identity
         {
             services.AddMvc();
             services.AddMongoDB(Configuration);
+            services.AddRabbitMq(Configuration);
+            services.AddScoped<ICommandHandler<CreateUser>, CreateUserHandler>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddSingleton<IEncrypter, Encrypter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
+
+            // Calls database initializer.
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+                serviceScope.ServiceProvider.GetService<IDatabaseInitializer>().InitializeAsync();
 
             app.UseMvc();
         }
