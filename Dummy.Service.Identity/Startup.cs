@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dummy.Common.Auth;
 using Dummy.Common.Commands;
 using Dummy.Common.Mongo;
 using Dummy.Common.RabbitMq;
@@ -34,6 +35,7 @@ namespace Dummy.Service.Identity
             services.AddMvc();
             services.AddLogging();
             services.AddMongoDB(Configuration);
+            services.AddJwt(Configuration);
             services.AddRabbitMq(Configuration);
             services.AddScoped<ICommandHandler<CreateUser>, CreateUserHandler>();
             services.AddScoped<IUserRepository, UserRepository>();

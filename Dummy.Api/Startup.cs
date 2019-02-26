@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dummy.Api.Handlers;
+using Dummy.Common.Auth;
 using Dummy.Common.Events;
 using Dummy.Common.RabbitMq;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ namespace Dummy.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddJwt(Configuration);
             services.AddRabbitMq(Configuration);
             services.AddScoped<IEventHandler<ActivityCreated>, ActivityCreatedHandler>();
         }

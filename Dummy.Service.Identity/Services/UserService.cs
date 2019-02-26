@@ -1,4 +1,5 @@
-﻿using Dummy.Common.Exceptions;
+﻿using Dummy.Common.Auth;
+using Dummy.Common.Exceptions;
 using Dummy.Service.Identity.Domain.Models;
 using Dummy.Service.Identity.Domain.Repositories;
 using Dummy.Service.Identity.Domain.Services;
@@ -13,13 +14,16 @@ namespace Dummy.Service.Identity.Services
     {
         private readonly IUserRepository _repository;
         private readonly IEncrypter _encrypter;
+        private readonly IJwtHandler _jwtHandler;
 
         public UserService(
             IUserRepository repository,
-            IEncrypter encrypter)
+            IEncrypter encrypter,
+            IJwtHandler jwtHandler)
         {
             _repository = repository;
             _encrypter = encrypter;
+            _jwtHandler = jwtHandler;
         }
 
         public async Task RegisterAsync(string email, string password, string name)
@@ -35,7 +39,7 @@ namespace Dummy.Service.Identity.Services
             await _repository.AddAsync(user);
         }
 
-        public async Task LoginAsync(string email, string password)
+        public async Task<JsonWebToken> LoginAsync(string email, string password)
         {
             var user = await _repository.GetAsync(email);
 
@@ -44,6 +48,8 @@ namespace Dummy.Service.Identity.Services
 
             if (!user.ValidatePassword(password, _encrypter))
                 throw new CustomException("invalid_credentials", $"Invalid credentials.");
+
+            return _jwtHandler.Create(user.Id);
         }
     }
 }
