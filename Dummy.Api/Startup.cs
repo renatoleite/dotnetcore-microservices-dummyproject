@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dummy.Api.Handlers;
+using Dummy.Api.Repositories;
 using Dummy.Common.Auth;
 using Dummy.Common.Events;
+using Dummy.Common.Mongo;
 using Dummy.Common.RabbitMq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,7 +32,9 @@ namespace Dummy.Api
             services.AddMvc();
             services.AddJwt(Configuration);
             services.AddRabbitMq(Configuration);
+            services.AddMongoDB(Configuration);
             services.AddScoped<IEventHandler<ActivityCreated>, ActivityCreatedHandler>();
+            services.AddScoped<IActivityRepository, ActivityRepository>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
