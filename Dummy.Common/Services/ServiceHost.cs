@@ -87,12 +87,16 @@ namespace Dummy.Common.Services
             /// <returns></returns>
             public BusBuilder SubscribeToCommand<TCommand>() where TCommand : ICommand
             {
-                var handler = (ICommandHandler<TCommand>)_webHost.Services
+                // Using microsoft extension dependency to resolve the issue to get events services registered.
+                using (var serviceScope = _webHost.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                {
+                    var handler = (ICommandHandler<TCommand>)serviceScope.ServiceProvider
                     .GetService(typeof(ICommandHandler<TCommand>));
 
-                _bus.WithCommandHandlerAsync(handler);
+                    _bus.WithCommandHandlerAsync(handler);
 
-                return this;
+                    return this;
+                }
             }
 
             /// <summary>
