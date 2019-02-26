@@ -19,7 +19,7 @@ namespace Dummy.Service.Activities
             // Startup and subscribe commands.
             ServiceHost.Create<Startup>(args)
                 .UseRabbitMq()
-                .SubscribeToCommand<CreateUser>()
+                .SubscribeToCommand<CreateActivity>()
                 .Build()
                 .Run();
         }
