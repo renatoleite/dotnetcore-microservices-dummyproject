@@ -31,7 +31,6 @@ namespace Dummy.Service.Activities
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
             services.AddRabbitMq(Configuration);
             services.AddMongoDB(Configuration);
 

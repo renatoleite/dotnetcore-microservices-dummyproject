@@ -9,6 +9,7 @@ using Dummy.Service.Identity.Domain.Repositories;
 using Dummy.Service.Identity.Domain.Services;
 using Dummy.Service.Identity.Handlers;
 using Dummy.Service.Identity.Repositories;
+using Dummy.Service.Identity.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,10 +32,12 @@ namespace Dummy.Service.Identity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddLogging();
             services.AddMongoDB(Configuration);
             services.AddRabbitMq(Configuration);
             services.AddScoped<ICommandHandler<CreateUser>, CreateUserHandler>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
             services.AddSingleton<IEncrypter, Encrypter>();
         }
 

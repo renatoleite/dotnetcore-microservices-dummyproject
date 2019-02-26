@@ -15,5 +15,8 @@ This is a simple dotnet core solution to study/test microservices
 - Run Api
 -- `dotnet run --urls "http://*:5000"`
 
-- Run Service Activities:
+- Run Activities Service:
 -- `dotnet run --urls "http://*:5050"`
+
+- Run Identity Service:
+-- `dotnet run --urls "http://*:5051"`
